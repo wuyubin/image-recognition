@@ -1,11 +1,10 @@
-% img=OCR_feature('Img/Sample058/img058-056.png');
-% imshow(img);
+
 
 
 fid = fopen('bufen.txt');
 row=42;
 column=24;
-train_data=zeros(64,row*column);%Ô¤·ÖÅäÊı¾İ¿ÉÒÔ¼ÓËÙÊı¾İ¶ÁÈ¡
+train_data=zeros(64,row*column);%é¢„åˆ†é…æ•°æ®å¯ä»¥åŠ é€Ÿæ•°æ®è¯»å–
 tline = fgetl(fid);
 i=1;
 % train_num=3446;
@@ -15,7 +14,7 @@ while ischar(tline)
     img=OCR_feature(tline);
     labelMat(1,i)=str2num(tline(12:13));
 %     labelMat(1,4)
-    img_data=img(1:row*column);%½«¶ÁÈ¡µÄÊı¾İ×ª³ÉÒ»¸öĞĞÏòÁ¿
+    img_data=img(1:row*column);%å°†è¯»å–çš„æ•°æ®è½¬æˆä¸€ä¸ªè¡Œå‘é‡
     train_data(i,:)=img_data;
     i=i+1;
    
@@ -24,53 +23,53 @@ end
 % size(train_data)
 % labelMat(1,3410)
 
-%½øĞĞÖ÷³É·İ·ÖÎö£¬·µ»ØµÄ½á¹ûÎª
-%   COEFF£ºÃ¿ÁĞÎªÌØÕ÷ÏòÁ¿
-%   latent£ºÌØÕ÷Öµ£¬°´ÓÉ´óµ½Ğ¡µÄË³ĞòÅÅÁĞ
-%µ±Êı¾İµÄÎ¬¶È´óÓÚÊı¾İ¸öÊıÊ±£¬Í¨¹ıÔÚº¯ÊıºóÃæÌí¼Ó²ÎÊı¡®econ¡¯¿ÉÒÔ¼ÓËÙ¼ÆËã
-%princomp»áÊ×ÏÈ½«Ã¿Ò»ÁĞ¼õÈ¥¸ÃÁĞ¾ùÖµ
+%è¿›è¡Œä¸»æˆä»½åˆ†æï¼Œè¿”å›çš„ç»“æœä¸º
+%   COEFFï¼šæ¯åˆ—ä¸ºç‰¹å¾å‘é‡
+%   latentï¼šç‰¹å¾å€¼ï¼ŒæŒ‰ç”±å¤§åˆ°å°çš„é¡ºåºæ’åˆ—
+%å½“æ•°æ®çš„ç»´åº¦å¤§äºæ•°æ®ä¸ªæ•°æ—¶ï¼Œé€šè¿‡åœ¨å‡½æ•°åé¢æ·»åŠ å‚æ•°â€˜econâ€™å¯ä»¥åŠ é€Ÿè®¡ç®—
+%princompä¼šé¦–å…ˆå°†æ¯ä¸€åˆ—å‡å»è¯¥åˆ—å‡å€¼
 [COEFF,~,latent] = princomp(train_data,'econ');
 
-%±£´æµÄÎ¬¶È£¨ÌØÕ÷Öµ£©¸öÊıÊ¹Í¼Ïñ±£´æµÄÄÜÁ¿´óÓÚ95%
+%ä¿å­˜çš„ç»´åº¦ï¼ˆç‰¹å¾å€¼ï¼‰ä¸ªæ•°ä½¿å›¾åƒä¿å­˜çš„èƒ½é‡å¤§äº95%
 dimension_left=0;
-%matlabÖĞcumsumº¯ÊıÍ¨³£ÓÃÓÚ¼ÆËãÒ»¸öÊı×é¸÷ĞĞµÄÀÛ¼ÓÖµ
-cum_percent=cumsum(latent)/sum(latent);%ÀÛ¼Æ¹±Ï×ÂÊ
+%matlabä¸­cumsumå‡½æ•°é€šå¸¸ç”¨äºè®¡ç®—ä¸€ä¸ªæ•°ç»„å„è¡Œçš„ç´¯åŠ å€¼
+cum_percent=cumsum(latent)/sum(latent);%ç´¯è®¡è´¡çŒ®ç‡
 for i=1:length(cum_percent)
-    %Ê¹Í¼Ïñ±£´æµÄÄÜÁ¿´óÓÚ0.95
+    %ä½¿å›¾åƒä¿å­˜çš„èƒ½é‡å¤§äº0.95
     if cum_percent(i)>=0.95
         dimension_left=i;
         break;
     end
 end
-%½«ÑµÁ·Êı¾İ¼¯£¨Õû¸ö¾ØÕó£©½øĞĞ½µÎ¬¡£ÌØÕ÷ÏòÁ¿¶¼ÎªĞĞÏòÁ¿£¿
+%å°†è®­ç»ƒæ•°æ®é›†ï¼ˆæ•´ä¸ªçŸ©é˜µï¼‰è¿›è¡Œé™ç»´ã€‚ç‰¹å¾å‘é‡éƒ½ä¸ºè¡Œå‘é‡ï¼Ÿ
 train_data_reduced=train_data*COEFF(:,1:dimension_left);
 
-%¶ÁÈ¡²âÊÔÊı¾İ¼¯
-test_data=zeros(20,row*column);%Ô¤·ÖÅäÊı¾İ¿ÉÒÔ¼ÓËÙÊı¾İ¶ÁÈ¡
+%è¯»å–æµ‹è¯•æ•°æ®é›†
+test_data=zeros(20,row*column);%é¢„åˆ†é…æ•°æ®å¯ä»¥åŠ é€Ÿæ•°æ®è¯»å–
 word=[ ];
 for i=1:20
     name=num2str(i);
     file_name1=strcat(name,'.jpg');
     file_name=strcat('extra/',file_name1);
-    %¶ÁÈ¡ÎÄ¼ş£¨£©¾ØÕóĞÎÊ½
+    %è¯»å–æ–‡ä»¶ï¼ˆï¼‰çŸ©é˜µå½¢å¼
     img_data=imread(file_name);
-    img_data=img_data(1:row*column);%½«¶ÁÈ¡µÄÊı¾İ×ª³ÉÒ»¸öĞĞÏòÁ¿
-    test_data(i,:)=img_data;%½«¸ÃĞĞÏòÁ¿Ìí¼Óµ½ÑµÁ·¼¯ÖĞ
+    img_data=img_data(1:row*column);%å°†è¯»å–çš„æ•°æ®è½¬æˆä¸€ä¸ªè¡Œå‘é‡
+    test_data(i,:)=img_data;%å°†è¯¥è¡Œå‘é‡æ·»åŠ åˆ°è®­ç»ƒé›†ä¸­
 end
-%½«²âÊÔÊı¾İ¼¯½øĞĞ½µÎ¬
+%å°†æµ‹è¯•æ•°æ®é›†è¿›è¡Œé™ç»´
 test_data_reduced=test_data*COEFF(:,1:dimension_left);
 result=zeros(1,20);
 for i=1:20
-    %Í¨¹ı¼ÆËãÏòÁ¿¶ş½×·¶ÊıµÄ·½·¨¼ÆËãÅ·Ê½¾àÀë
+    %é€šè¿‡è®¡ç®—å‘é‡äºŒé˜¶èŒƒæ•°çš„æ–¹æ³•è®¡ç®—æ¬§å¼è·ç¦»
     min=norm(test_data_reduced(i,:)-train_data_reduced(1,:))*norm(test_data_reduced(i,:)-train_data_reduced(1,:));
-    %Å·ÊÏ¾àÀë×î¶ÌµÄÄÇ¸ö
+    %æ¬§æ°è·ç¦»æœ€çŸ­çš„é‚£ä¸ª
     position=1;
     for j=2:65
-        %normº¯Êı¿É¼ÆËã¼¸ÖÖ²»Í¬ÀàĞÍµÄ¾ØÕó·¶Êı,¸ù¾İpµÄ²»Í¬¿ÉµÃµ½²»Í¬µÄ·¶Êı
+        %normå‡½æ•°å¯è®¡ç®—å‡ ç§ä¸åŒç±»å‹çš„çŸ©é˜µèŒƒæ•°,æ ¹æ®pçš„ä¸åŒå¯å¾—åˆ°ä¸åŒçš„èŒƒæ•°
         distance=norm(test_data_reduced(i,:)-train_data_reduced(j,:))*norm(test_data_reduced(i,:)-train_data_reduced(j,:));
         if min>distance
             min=distance;
-            %Å·ÊÏ¾àÀë×î¶ÌµÄÄÇ¸ö
+            %æ¬§æ°è·ç¦»æœ€çŸ­çš„é‚£ä¸ª
             position=j;
         end
     end
